@@ -129,6 +129,9 @@ export interface CalendarProps<T extends ICalendarEventBase> {
   moreLabel?: string
   showAdjacentMonths?: boolean
   sortedMonthView?: boolean
+  minTimeMinutes?:number,
+  maxTimeMinutes?:number,
+  stepMinutes?:number
 }
 ```
 
@@ -171,6 +174,9 @@ export interface CalendarProps<T extends ICalendarEventBase> {
 | `moreLabel`                   | no       | `string`                                               | String to replace More label in month view. Default: '{moreCount} More'. {moreCount} is replaced by number of extra events                                                                                                                                                                                                                                                                                                                                      |
 | `showAdjacentMonths`          | no       | `boolean`                                              | Boolean for showing/hiding adjacent months in month view. Defaults to true                                                                                                                                                                                                                                                                                                                                                                                      |
 | `sortedMonthView`             | no       | `boolean`                                              | Boolean for sorting events in month view. Defaults to true                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `minTimeMinutes`              | no       | `number`                                               | min time hour in minutes for example 8h = 480 minutes default to 0                                                                                                                                                                                                                                                                                                                                                                                              |
+| `maxTimeMinutes`              | no       | `number`                                               | max time hour in minutes for example 23h = 1380 minutes default to 1440                                                                                                                                                                                                                                                                                                                                                                                         |
+| `stepMinutes`                 | no       | `number`                                               | step between each time default 60 minutes                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 ## EventRenderer
 
@@ -362,7 +368,6 @@ yarn start-rndemo-android
 <a href="https://www.telaqua.com?utm_source=react-native-big-calendar">
   <img src="https://user-images.githubusercontent.com/10719495/195131400-cd334757-caad-4ed8-ba73-786affa2a6b0.png" height="80" />
 </a>
-
 
 </p>
 

@@ -62,20 +62,45 @@ export const hours = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
 ]
 
-export function formatHour(hour: number, ampm = false) {
-  if (ampm) {
-    if (hour === 0) {
-      return ''
-    }
-    if (hour === 12) {
-      return `12 PM`
-    }
-    if (hour > 12) {
-      return `${hour - 12} PM`
-    }
-    return `${hour} AM`
+export function parseStartEndHour(time: String) {
+  const timeArray = time.split(':').map((x) => +x)
+  let now = new Date()
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...timeArray)
+}
+
+export function padZeros(value: number, length: number) {
+  return `0000${value}`.slice(-length)
+}
+export function getTimeContext(minutes: number) {
+  const minute = minutes % 60
+  const hour24 = Math.floor(minutes / 60)
+  const hour12 = hour24 % 12 || 12
+  const ampm = hour24 < 12 ? 'am' : 'pm'
+
+  return {
+    minute,
+    hour24,
+    hour12,
+    ampm,
+    hour24Label: `${padZeros(hour24, 2)}:${padZeros(minute, 2)}`,
+    hour12Label: `${hour12}:${padZeros(minute, 2)}${ampm}`,
   }
-  return `${hour}:00`
+}
+
+export function generateHoursArray(
+  minTimeMinutes: number,
+  maxTimeMinutes: number,
+  stepMinutes: number,
+) {
+  let res = []
+  while (minTimeMinutes < maxTimeMinutes) {
+    let time = getTimeContext(minTimeMinutes)
+    res.push(time)
+
+    minTimeMinutes = minTimeMinutes + stepMinutes
+  }
+
+  return res
 }
 
 export function isToday(date: dayjs.Dayjs) {
@@ -83,8 +108,24 @@ export function isToday(date: dayjs.Dayjs) {
   return today.isSame(date, 'day')
 }
 
-export function getRelativeTopInDay(date: dayjs.Dayjs) {
-  return (100 * (date.hour() * 60 + date.minute())) / DAY_MINUTES
+export function normalize(
+  val: number,
+  minVal: number,
+  maxVal: number,
+  newMin: number,
+  newMax: number,
+) {
+  return newMin + ((val - minVal) * (newMax - newMin)) / (maxVal - minVal)
+}
+
+export function getRelativeTopInDay(
+  date: dayjs.Dayjs,
+  minTimeMinutes: number,
+  maxTimeMinutes: number,
+) {
+  let res = normalize(date.hour() * 60 + date.minute(), minTimeMinutes, maxTimeMinutes, 0, 100)
+
+  return res
 }
 
 export function todayInMinutes() {
@@ -222,32 +263,26 @@ export function getEventSpanningInfo(
   date: dayjs.Dayjs,
   dayOfTheWeek: number,
   calendarWidth: number,
-  showAdjacentMonths: boolean,
 ) {
   const dayWidth = calendarWidth / 7
 
   // adding + 1 because durations start at 0
-  const eventDuration =
-    Math.floor(dayjs.duration(dayjs(event.end).diff(dayjs(event.start))).asDays()) + 1
-  const eventDaysLeft = Math.floor(dayjs.duration(dayjs(event.end).diff(date)).asDays()) + 1
+  const eventDuration = dayjs.duration(dayjs(event.end).diff(dayjs(event.start))).days() + 1
+  const eventDaysLeft = dayjs.duration(dayjs(event.end).diff(date)).days() + 1
   const weekDaysLeft = 7 - dayOfTheWeek
-  const monthDaysLeft = date.endOf('month').date() - date.date()
-  // console.log(dayOfTheWeek === 0 && !showAdjacentMonths && monthDaysLeft < 7)
   const isMultipleDays = eventDuration > 1
   // This is to determine how many days from the event to show during a week
   const eventWeekDuration =
-    !showAdjacentMonths && monthDaysLeft < 7 && monthDaysLeft < eventDuration
-      ? monthDaysLeft + 1
-      : eventDaysLeft > weekDaysLeft
+    eventDuration > weekDaysLeft
       ? weekDaysLeft
-      : eventDaysLeft < eventDuration
+      : dayOfTheWeek === 0 && eventDaysLeft < eventDuration
       ? eventDaysLeft
       : eventDuration
   const isMultipleDaysStart =
     isMultipleDays &&
     (date.isSame(event.start, 'day') ||
       (dayOfTheWeek === 0 && date.isAfter(event.start)) ||
-      (!showAdjacentMonths && date.get('date') === 1))
+      date.get('date') === 1)
   // - 6 to take in account the padding
   const eventWidth = dayWidth * eventWeekDuration - 6
 

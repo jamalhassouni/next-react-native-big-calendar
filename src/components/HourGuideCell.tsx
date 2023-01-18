@@ -10,12 +10,12 @@ interface HourGuideCellProps {
   cellHeight: number
   onPress: (d: dayjs.Dayjs) => void
   date: dayjs.Dayjs
-  hour: number
+  hour: string
   index: number
   calendarCellStyle?: CalendarCellStyle
 }
 
-const _HourGuideCell = ({
+export const HourGuideCell = ({
   cellHeight,
   onPress,
   date,
@@ -29,9 +29,12 @@ const _HourGuideCell = ({
     () => (typeof calendarCellStyle === 'function' ? calendarCellStyle : () => calendarCellStyle),
     [calendarCellStyle],
   )
-
+  const numberHour = hour.split(':')[0]
+  const numberMinute = hour.split(':')[1]
   return (
-    <TouchableWithoutFeedback onPress={() => onPress(date.hour(hour).minute(0))}>
+    <TouchableWithoutFeedback
+      onPress={() => onPress(date.hour(Number(numberHour)).minute(Number(numberMinute)))}
+    >
       <View
         style={[
           u['border-l'],
@@ -44,5 +47,3 @@ const _HourGuideCell = ({
     </TouchableWithoutFeedback>
   )
 }
-
-export const HourGuideCell = React.memo(_HourGuideCell)

@@ -14,10 +14,10 @@ import {
 } from '../interfaces'
 import { useTheme } from '../theme/ThemeContext'
 import {
+  generateHoursArray,
   getCountOfEventsAtEvent,
   getOrderOfEvent,
   getRelativeTopInDay,
-  hours,
   isToday,
   typedMemo,
 } from '../utils'
@@ -54,7 +54,9 @@ interface CalendarBodyProps<T extends ICalendarEventBase> {
   headerComponent?: React.ReactElement | null
   headerComponentStyle?: ViewStyle
   hourStyle?: TextStyle
-  hideHours?: Boolean
+  minTimeMinutes?: number
+  maxTimeMinutes?: number
+  stepMinutes?: number
 }
 
 function _CalendarBody<T extends ICalendarEventBase>({
@@ -77,21 +79,22 @@ function _CalendarBody<T extends ICalendarEventBase>({
   headerComponent = null,
   headerComponentStyle = {},
   hourStyle = {},
-  hideHours = false,
+  minTimeMinutes = 0,
+  maxTimeMinutes = 1440,
+  stepMinutes = 60,
 }: CalendarBodyProps<T>) {
   const scrollView = React.useRef<ScrollView>(null)
   const { now } = useNow(!hideNowIndicator)
 
   React.useEffect(() => {
-    let timeout: NodeJS.Timeout
     if (scrollView.current && scrollOffsetMinutes && Platform.OS !== 'ios') {
       // We add delay here to work correct on React Native
       // see: https://stackoverflow.com/questions/33208477/react-native-android-scrollview-scrollto-not-working
-      timeout = setTimeout(
+      setTimeout(
         () => {
           if (scrollView && scrollView.current) {
             scrollView.current.scrollTo({
-              y: (cellHeight * scrollOffsetMinutes) / 60,
+              y: (cellHeight * scrollOffsetMinutes) / stepMinutes,
               animated: false,
             })
           }
@@ -99,12 +102,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
         Platform.OS === 'web' ? 0 : 10,
       )
     }
-    return () => {
-      if (timeout) {
-        clearTimeout(timeout)
-      }
-    }
-  }, [scrollView, scrollOffsetMinutes, cellHeight])
+  }, [scrollView, scrollOffsetMinutes, cellHeight, stepMinutes])
 
   const panResponder = usePanResponder({
     onSwipeHorizontal,
@@ -117,27 +115,25 @@ function _CalendarBody<T extends ICalendarEventBase>({
     [onPressCell],
   )
 
-  const _renderMappedEvent = React.useCallback(
-    (event: T, index: number) => {
-      return (
-        <CalendarEvent
-          key={`${index}${event.start}${event.title}${event.end}`}
-          event={event}
-          onPressEvent={onPressEvent}
-          eventCellStyle={eventCellStyle}
-          showTime={showTime}
-          eventCount={getCountOfEventsAtEvent(event, events)}
-          eventOrder={getOrderOfEvent(event, events)}
-          overlapOffset={overlapOffset}
-          renderEvent={renderEvent}
-          ampm={ampm}
-        />
-      )
-    },
-    [ampm, eventCellStyle, events, onPressEvent, overlapOffset, renderEvent, showTime],
+  const _renderMappedEvent = (event: T) => (
+    <CalendarEvent
+      key={`${event.start}${event.title}${event.end}`}
+      event={event}
+      onPressEvent={onPressEvent}
+      eventCellStyle={eventCellStyle}
+      showTime={showTime}
+      eventCount={getCountOfEventsAtEvent(event, events)}
+      eventOrder={getOrderOfEvent(event, events)}
+      overlapOffset={overlapOffset}
+      renderEvent={renderEvent}
+      ampm={ampm}
+      minTimeMinutes={minTimeMinutes}
+      maxTimeMinutes={maxTimeMinutes}
+    />
   )
 
   const theme = useTheme()
+  const hours = generateHoursArray(minTimeMinutes, maxTimeMinutes, stepMinutes)
 
   return (
     <React.Fragment>
@@ -160,28 +156,25 @@ function _CalendarBody<T extends ICalendarEventBase>({
           style={[u['flex-1'], theme.isRTL ? u['flex-row-reverse'] : u['flex-row']]}
           {...(Platform.OS === 'web' ? panResponder.panHandlers : {})}
         >
-          {!hideHours && (
-            <View style={[u['z-20'], u['w-50']]}>
-              {hours.map((hour) => (
-                <HourGuideColumn
-                  key={hour}
-                  cellHeight={cellHeight}
-                  hour={hour}
-                  ampm={ampm}
-                  hourStyle={hourStyle}
-                />
-              ))}
-            </View>
-          )}
-
+          <View style={[u['z-20'], u['w-50']]}>
+            {hours.map((hour, index) => (
+              <HourGuideColumn
+                key={index + ''}
+                cellHeight={cellHeight}
+                hour={ampm ? hour.hour12Label : hour.hour24Label}
+                ampm={ampm}
+                hourStyle={hourStyle}
+              />
+            ))}
+          </View>
           {dateRange.map((date) => (
             <View style={[u['flex-1'], u['overflow-hidden']]} key={date.toString()}>
               {hours.map((hour, index) => (
                 <HourGuideCell
-                  key={hour}
+                  key={index + ''}
                   cellHeight={cellHeight}
                   date={date}
-                  hour={hour}
+                  hour={ampm ? hour.hour12Label : hour.hour24Label}
                   onPress={_onPressCell}
                   index={index}
                   calendarCellStyle={calendarCellStyle}
@@ -233,7 +226,7 @@ function _CalendarBody<T extends ICalendarEventBase>({
                   style={[
                     styles.nowIndicator,
                     { backgroundColor: theme.palette.nowIndicator },
-                    { top: `${getRelativeTopInDay(now)}%` },
+                    { top: `${getRelativeTopInDay(now, minTimeMinutes, maxTimeMinutes)}%` },
                   ]}
                 />
               )}

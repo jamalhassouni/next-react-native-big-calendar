@@ -5,17 +5,8 @@ import { OVERLAP_OFFSET, u } from '../commonStyles'
 import { useCalendarTouchableOpacityProps } from '../hooks/useCalendarTouchableOpacityProps'
 import { EventCellStyle, EventRenderer, ICalendarEventBase } from '../interfaces'
 import { useTheme } from '../theme/ThemeContext'
-import { DAY_MINUTES, getRelativeTopInDay, getStyleForOverlappingEvent, typedMemo } from '../utils'
+import { getRelativeTopInDay, getStyleForOverlappingEvent, typedMemo } from '../utils'
 import { DefaultCalendarEventRenderer } from './DefaultCalendarEventRenderer'
-
-const getEventCellPositionStyle = (start: Date, end: Date) => {
-  const relativeHeight = 100 * (1 / DAY_MINUTES) * dayjs(end).diff(start, 'minute')
-  const relativeTop = getRelativeTopInDay(dayjs(start))
-  return {
-    height: `${relativeHeight}%`,
-    top: `${relativeTop}%`,
-  }
-}
 
 interface CalendarEventProps<T extends ICalendarEventBase> {
   event: T
@@ -27,6 +18,8 @@ interface CalendarEventProps<T extends ICalendarEventBase> {
   overlapOffset?: number
   renderEvent?: EventRenderer<T>
   ampm: boolean
+  minTimeMinutes: number
+  maxTimeMinutes: number
 }
 
 function _CalendarEvent<T extends ICalendarEventBase>({
@@ -39,6 +32,8 @@ function _CalendarEvent<T extends ICalendarEventBase>({
   overlapOffset = OVERLAP_OFFSET,
   renderEvent,
   ampm,
+  minTimeMinutes = 0,
+  maxTimeMinutes = 1440,
 }: CalendarEventProps<T>) {
   const theme = useTheme()
 
@@ -46,6 +41,17 @@ function _CalendarEvent<T extends ICalendarEventBase>({
     () => [theme.palette.primary, ...theme.eventCellOverlappings],
     [theme],
   )
+
+  const getEventCellPositionStyle = (start: Date, end: Date) => {
+    const relativeHeight =
+      100 * (1 / (maxTimeMinutes - minTimeMinutes)) * dayjs(end).diff(start, 'minute')
+    const relativeTop = getRelativeTopInDay(dayjs(start), minTimeMinutes, maxTimeMinutes)
+
+    return {
+      height: `${relativeHeight}%`,
+      top: `${relativeTop}%`,
+    }
+  }
 
   const touchableOpacityProps = useCalendarTouchableOpacityProps({
     event,

@@ -18,6 +18,7 @@ import {
 } from '../interfaces'
 import { useTheme } from '../theme/ThemeContext'
 import {
+  generateHoursArray,
   getDatesInMonth,
   getDatesInNextCustomDays,
   getDatesInNextOneDay,
@@ -33,10 +34,6 @@ import { CalendarHeader } from './CalendarHeader'
 import { CalendarHeaderForMonthView } from './CalendarHeaderForMonthView'
 
 export interface CalendarContainerProps<T extends ICalendarEventBase> {
-  /**
-   * To remove Hours Column from week View.
-   */
-  hideHours?: Boolean
   /**
    * Events to be rendered. This is a required prop.
    */
@@ -78,7 +75,6 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
   date?: Date
   locale?: string
   hideNowIndicator?: boolean
-  showAdjacentMonths?: boolean
   mode?: Mode
   scrollOffsetMinutes?: number
   showTime?: boolean
@@ -97,8 +93,9 @@ export interface CalendarContainerProps<T extends ICalendarEventBase> {
   headerComponentStyle?: ViewStyle
   hourStyle?: TextStyle
   showAllDayEventCell?: boolean
-  sortedMonthView?: boolean
-  moreLabel?: string
+  minTimeMinutes?: number
+  maxTimeMinutes?: number
+  stepMinutes?: number
 }
 
 function _CalendarContainer<T extends ICalendarEventBase>({
@@ -139,10 +136,9 @@ function _CalendarContainer<T extends ICalendarEventBase>({
   headerComponentStyle = {},
   hourStyle = {},
   showAllDayEventCell = true,
-  moreLabel = '{moreCount} More',
-  showAdjacentMonths = true,
-  sortedMonthView = true,
-  hideHours = false,
+  minTimeMinutes = 0,
+  maxTimeMinutes = 1440,
+  stepMinutes = 60,
 }: CalendarContainerProps<T>) {
   const [targetDate, setTargetDate] = React.useState(dayjs(date))
 
@@ -162,31 +158,37 @@ function _CalendarContainer<T extends ICalendarEventBase>({
     [events],
   )
 
-  const getDateRange = React.useCallback(
-    (date: dayjs.Dayjs) => {
-      switch (mode) {
-        case 'month':
-          return getDatesInMonth(date, locale)
-        case 'week':
-          return getDatesInWeek(date, weekStartsOn, locale)
-        case '3days':
-          return getDatesInNextThreeDays(date, locale)
-        case 'day':
-          return getDatesInNextOneDay(date, locale)
-        case 'custom':
-          return getDatesInNextCustomDays(date, weekStartsOn, weekEndsOn, locale)
-        default:
-          throw new Error(
-            `[react-native-big-calendar] The mode which you specified "${mode}" is not supported.`,
-          )
-      }
-    },
-    [mode, locale, weekEndsOn, weekStartsOn],
-  )
+  const dateRange = React.useMemo(() => {
+    switch (mode) {
+      case 'month':
+        return getDatesInMonth(targetDate, locale)
+      case 'week':
+        return getDatesInWeek(targetDate, weekStartsOn, locale)
+      case '3days':
+        return getDatesInNextThreeDays(targetDate, locale)
+      case 'day':
+        return getDatesInNextOneDay(targetDate, locale)
+      case 'custom':
+        return getDatesInNextCustomDays(targetDate, weekStartsOn, weekEndsOn, locale)
+      default:
+        throw new Error(
+          `[react-native-big-calendar] The mode which you specified "${mode}" is not supported.`,
+        )
+    }
+  }, [mode, targetDate, locale, weekEndsOn, weekStartsOn])
+
+  React.useEffect(() => {
+    if (onChangeDate) {
+      onChangeDate([dateRange[0].toDate(), dateRange.slice(-1)[0].toDate()])
+    }
+  }, [dateRange, onChangeDate])
 
   const cellHeight = React.useMemo(
-    () => hourRowHeight || Math.max(height - 30, MIN_HEIGHT) / 24,
-    [height, hourRowHeight],
+    () =>
+      hourRowHeight ||
+      Math.max(height - stepMinutes / 2, MIN_HEIGHT) /
+        generateHoursArray(minTimeMinutes, maxTimeMinutes, stepMinutes).length,
+    [height, hourRowHeight, minTimeMinutes, maxTimeMinutes, stepMinutes],
   )
 
   const theme = useTheme()
@@ -196,31 +198,20 @@ function _CalendarContainer<T extends ICalendarEventBase>({
       if (!swipeEnabled) {
         return
       }
-      let nextTargetDate: dayjs.Dayjs
       if ((direction === 'LEFT' && !theme.isRTL) || (direction === 'RIGHT' && theme.isRTL)) {
-        nextTargetDate = targetDate.add(modeToNum(mode, targetDate), 'day')
+        setTargetDate(targetDate.add(modeToNum(mode, targetDate), 'day'))
       } else {
-        if (mode === 'month') {
-          nextTargetDate = targetDate.add(targetDate.date() * -1, 'day')
-        } else {
-          nextTargetDate = targetDate.add(modeToNum(mode, targetDate) * -1, 'day')
-        }
-      }
-      setTargetDate(nextTargetDate)
-      if (onChangeDate) {
-        const nextDateRange = getDateRange(nextTargetDate)
-        onChangeDate([nextDateRange[0].toDate(), nextDateRange.slice(-1)[0].toDate()])
+        setTargetDate(targetDate.add(modeToNum(mode, targetDate) * -1, 'day'))
       }
     },
-    [swipeEnabled, targetDate, mode, theme.isRTL, getDateRange, onChangeDate],
+    [swipeEnabled, targetDate, mode, theme.isRTL],
   )
 
   const commonProps = {
     cellHeight,
-    dateRange: getDateRange(targetDate),
+    dateRange,
     mode,
     onPressEvent,
-    hideHours,
   }
 
   if (mode === 'month') {
@@ -238,6 +229,9 @@ function _CalendarContainer<T extends ICalendarEventBase>({
       <React.Fragment>
         <HeaderComponentForMonthView {...headerProps} />
         <CalendarBodyForMonthView<T>
+          showAdjacentMonths={false}
+          moreLabel={''}
+          sortedMonthView={false}
           {...commonProps}
           style={bodyContainerStyle}
           containerHeight={height}
@@ -247,17 +241,13 @@ function _CalendarContainer<T extends ICalendarEventBase>({
           calendarCellTextStyle={calendarCellTextStyle}
           weekStartsOn={weekStartsOn}
           hideNowIndicator={hideNowIndicator}
-          showAdjacentMonths={showAdjacentMonths}
           onPressCell={onPressCell}
-          onPressDateHeader={onPressDateHeader}
           onPressEvent={onPressEvent}
           onSwipeHorizontal={onSwipeHorizontal}
           renderEvent={renderEvent}
           targetDate={targetDate}
           maxVisibleEventCount={maxVisibleEventCount}
           eventMinHeightForMonthView={eventMinHeightForMonthView}
-          sortedMonthView={sortedMonthView}
-          moreLabel={moreLabel}
         />
       </React.Fragment>
     )
@@ -298,6 +288,9 @@ function _CalendarContainer<T extends ICalendarEventBase>({
         headerComponent={headerComponent}
         headerComponentStyle={headerComponentStyle}
         hourStyle={hourStyle}
+        minTimeMinutes={minTimeMinutes}
+        maxTimeMinutes={maxTimeMinutes}
+        stepMinutes={stepMinutes}
       />
     </React.Fragment>
   )

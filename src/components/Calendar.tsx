@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
-import { merge } from 'merge-anything'
+//import { merge } from 'merge-anything'
 import React from 'react'
 
 import { ICalendarEventBase } from '../interfaces'
@@ -23,9 +23,10 @@ function _Calendar<T extends ICalendarEventBase>({
   isRTL,
   ...props
 }: CalendarProps<T>) {
-  const _theme = merge(defaultTheme, theme, { isRTL }) as ThemeInterface
+  //const _theme = merge(defaultTheme, theme, { isRTL }) as ThemeInterface
+
   return (
-    <ThemeContext.Provider value={_theme}>
+    <ThemeContext.Provider value={defaultTheme}>
       <CalendarContainer {...props} />
     </ThemeContext.Provider>
   )

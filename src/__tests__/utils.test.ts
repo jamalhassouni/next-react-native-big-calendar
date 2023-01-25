@@ -189,7 +189,7 @@ describe('spanning events', () => {
       date,
       date.day(),
       0,
-      //true,
+      true,
     )
 
     expect(isMultipleDays).toBe(true)
@@ -203,7 +203,7 @@ describe('spanning events', () => {
       date,
       date.day(),
       0,
-      // true,
+      true,
     )
 
     expect(isMultipleDays).toBe(true)
@@ -218,7 +218,7 @@ describe('spanning events', () => {
       date,
       date.day(),
       0,
-      //true,
+      true,
     )
 
     expect(isMultipleDays).toBe(true)

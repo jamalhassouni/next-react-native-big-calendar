@@ -93,7 +93,7 @@ export function generateHoursArray(
   stepMinutes: number,
 ) {
   let res = []
-  while (minTimeMinutes < maxTimeMinutes) {
+  while (minTimeMinutes <= maxTimeMinutes) {
     let time = getTimeContext(minTimeMinutes)
     res.push(time)
 
@@ -263,26 +263,32 @@ export function getEventSpanningInfo(
   date: dayjs.Dayjs,
   dayOfTheWeek: number,
   calendarWidth: number,
+  showAdjacentMonths: boolean,
 ) {
   const dayWidth = calendarWidth / 7
 
   // adding + 1 because durations start at 0
-  const eventDuration = dayjs.duration(dayjs(event.end).diff(dayjs(event.start))).days() + 1
-  const eventDaysLeft = dayjs.duration(dayjs(event.end).diff(date)).days() + 1
+  const eventDuration =
+    Math.floor(dayjs.duration(dayjs(event.end).diff(dayjs(event.start))).asDays()) + 1
+  const eventDaysLeft = Math.floor(dayjs.duration(dayjs(event.end).diff(date)).asDays()) + 1
   const weekDaysLeft = 7 - dayOfTheWeek
+  const monthDaysLeft = date.endOf('month').date() - date.date()
+  // console.log(dayOfTheWeek === 0 && !showAdjacentMonths && monthDaysLeft < 7)
   const isMultipleDays = eventDuration > 1
   // This is to determine how many days from the event to show during a week
   const eventWeekDuration =
-    eventDuration > weekDaysLeft
+    !showAdjacentMonths && monthDaysLeft < 7 && monthDaysLeft < eventDuration
+      ? monthDaysLeft + 1
+      : eventDaysLeft > weekDaysLeft
       ? weekDaysLeft
-      : dayOfTheWeek === 0 && eventDaysLeft < eventDuration
+      : eventDaysLeft < eventDuration
       ? eventDaysLeft
       : eventDuration
   const isMultipleDaysStart =
     isMultipleDays &&
     (date.isSame(event.start, 'day') ||
       (dayOfTheWeek === 0 && date.isAfter(event.start)) ||
-      date.get('date') === 1)
+      (!showAdjacentMonths && date.get('date') === 1))
   // - 6 to take in account the padding
   const eventWidth = dayWidth * eventWeekDuration - 6
 

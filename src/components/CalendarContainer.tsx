@@ -192,19 +192,49 @@ function _CalendarContainer<T extends ICalendarEventBase>({
   )
 
   const theme = useTheme()
-
+  const getDateRange = React.useCallback(
+    (date: dayjs.Dayjs) => {
+      switch (mode) {
+        case 'month':
+          return getDatesInMonth(date, locale)
+        case 'week':
+          return getDatesInWeek(date, weekStartsOn, locale)
+        case '3days':
+          return getDatesInNextThreeDays(date, locale)
+        case 'day':
+          return getDatesInNextOneDay(date, locale)
+        case 'custom':
+          return getDatesInNextCustomDays(date, weekStartsOn, weekEndsOn, locale)
+        default:
+          throw new Error(
+            `[react-native-big-calendar] The mode which you specified "${mode}" is not supported.`,
+          )
+      }
+    },
+    [mode, locale, weekEndsOn, weekStartsOn],
+  )
   const onSwipeHorizontal = React.useCallback(
     (direction: HorizontalDirection) => {
       if (!swipeEnabled) {
         return
       }
+      let nextTargetDate: dayjs.Dayjs
       if ((direction === 'LEFT' && !theme.isRTL) || (direction === 'RIGHT' && theme.isRTL)) {
-        setTargetDate(targetDate.add(modeToNum(mode, targetDate), 'day'))
+        nextTargetDate = targetDate.add(modeToNum(mode, targetDate), 'day')
       } else {
-        setTargetDate(targetDate.add(modeToNum(mode, targetDate) * -1, 'day'))
+        if (mode === 'month') {
+          nextTargetDate = targetDate.add(targetDate.date() * -1, 'day')
+        } else {
+          nextTargetDate = targetDate.add(modeToNum(mode, targetDate) * -1, 'day')
+        }
+      }
+      setTargetDate(nextTargetDate)
+      if (onChangeDate) {
+        const nextDateRange = getDateRange(nextTargetDate)
+        onChangeDate([nextDateRange[0].toDate(), nextDateRange.slice(-1)[0].toDate()])
       }
     },
-    [swipeEnabled, targetDate, mode, theme.isRTL],
+    [swipeEnabled, targetDate, mode, theme.isRTL, getDateRange, onChangeDate],
   )
 
   const commonProps = {

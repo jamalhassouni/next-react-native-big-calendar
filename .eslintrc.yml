@@ -16,12 +16,14 @@ parserOptions:
   sourceType: module
 settings:
   react:
-    version: '16.13'
+    version: '17.0.2'
 rules:
+  import/no-named-as-default: 0
   no-unused-vars: off
   import/first: error
+  import/prefer-default-export: off
   import/newline-after-import: error
-  import/no-default-export: error     # https://basarat.gitbook.io/typescript/main-1/defaultisbad
+  import/no-default-export: off # https://basarat.gitbook.io/typescript/main-1/defaultisbad
   import/no-anonymous-default-export: error
   react-hooks/exhaustive-deps: error
   react-hooks/rules-of-hooks: error

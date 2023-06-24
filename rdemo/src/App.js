@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import React, { useState } from 'react'
 import { Dimensions, Picker, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import { Calendar, defaultTheme, modeToNum } from './Calendar'
+import { Calendar, defaultTheme, modeToNum } from './build'
 
 const today = dayjs().toDate()
 const Button = ({ content, onClick }) => {
@@ -21,12 +21,12 @@ const events = [
   },
   {
     title: 'Meeting again',
-    start: dayjs().set('hour', 16).set('minute', 30).toDate(),
+    start: dayjs().set('hour', 14).set('minute', 30).toDate(),
     end: dayjs().set('hour', 17).set('minute', 30).toDate(),
   },
   {
     title: 'Dinner at the Plaza',
-    start: dayjs().set('hour', 18).set('minute', 30).toDate(),
+    start: dayjs().set('hour', 17).set('minute', 30).toDate(),
     end: dayjs().set('hour', 19).set('minute', 30).toDate(),
   },
   {
@@ -393,6 +393,54 @@ const events = [
     title: 'Dinner',
     start: dayjs().add(25, 'day').set('hour', 18).set('minute', 30).toDate(),
     end: dayjs().add(25, 'day').set('hour', 19).set('minute', 30).toDate(),
+  },
+  {
+    id: '252',
+    title: '20:41 - 23:59 (14-16)',
+    start: dayjs('2023-04-14T15:41:00.000Z').toDate(),
+    end: dayjs('2023-04-16T18:59:00.000Z').toDate(),
+    startTime: '2023-04-14T15:41:00.000Z',
+    endTime: '2023-04-16T18:59:00.000Z',
+  },
+  {
+    id: '253',
+    title: '20:41 - 23:59 (15-17)',
+    start: dayjs('2023-04-15T15:41:00.000Z').toDate(),
+    end: dayjs('2023-04-17T18:59:00.000Z').toDate(),
+    startTime: '2023-04-15T15:41:00.000Z',
+    endTime: '2023-04-17T18:59:00.000Z',
+  },
+  {
+    id: '254',
+    title: '20:41 - 23:59 (16-18)',
+    start: dayjs('2023-04-16T15:41:00.000Z').toDate(),
+    end: dayjs('2023-04-18T18:59:00.000Z').toDate(),
+    startTime: '2023-04-16T15:41:00.000Z',
+    endTime: '2023-04-18T18:59:00.000Z',
+  },
+  {
+    id: '255',
+    title: '20:41 - 23:59 (17-18)',
+    start: dayjs('2023-04-17T15:41:00.000Z').toDate(),
+    end: dayjs('2023-04-19T18:59:00.000Z').toDate(),
+    startTime: '2023-04-17T15:41:00.000Z',
+    endTime: '2023-04-19T18:59:00.000Z',
+  },
+  {
+    id: '256',
+    title: '20:41 - 23:59 (18-20)',
+    start: dayjs('2023-04-18T15:41:00.000Z').toDate(),
+    end: dayjs('2023-04-20T18:59:00.000Z').toDate(),
+    startTime: '2023-04-18T15:41:00.000Z',
+    endTime: '2023-04-20T18:59:00.000Z',
+  },
+  {
+    id: '257',
+    title: '20:41 - 23:59 (19-21)',
+    start: dayjs('2023-04-19T15:41:00.000Z').toDate(),
+    end: dayjs('2023-04-21T18:59:00.000Z').toDate(),
+    startTime: '2023-04-19T15:41:00.000Z',
+    endTime: '2023-04-21T18:59:00.000Z',
   },
 ]
 function App() {

@@ -1,19 +1,52 @@
-import calendarize from 'calendarize'
-import dayjs from 'dayjs'
-import duration from 'dayjs/plugin/duration'
-import isBetween from 'dayjs/plugin/isBetween'
-import * as React from 'react'
-import React__default, { createContext, useContext } from 'react'
-import {
-  PanResponder,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
+
+
+Object.defineProperty(exports, '__esModule', { value: true })
+
+var dayjs = require('dayjs')
+var duration = require('dayjs/plugin/duration')
+var isBetween = require('dayjs/plugin/isBetween')
+var React = require('react')
+var calendarize = require('calendarize')
+var sortBy = require('lodash/sortBy')
+var reactNative = require('react-native')
+
+function _interopDefaultLegacy(e) {
+  return e && typeof e === 'object' && 'default' in e ? e : { default: e }
+}
+
+function _interopNamespace(e) {
+  if (e && e.__esModule) return e
+  var n = Object.create(null)
+  if (e) {
+    Object.keys(e).forEach(function (k) {
+      if (k !== 'default') {
+        var d = Object.getOwnPropertyDescriptor(e, k)
+        Object.defineProperty(
+          n,
+          k,
+          d.get
+            ? d
+            : {
+                enumerable: true,
+                get: function () {
+                  return e[k]
+                },
+              },
+        )
+      }
+    })
+  }
+  n['default'] = e
+  return Object.freeze(n)
+}
+
+var dayjs__default = /*#__PURE__*/ _interopDefaultLegacy(dayjs)
+var duration__default = /*#__PURE__*/ _interopDefaultLegacy(duration)
+var isBetween__default = /*#__PURE__*/ _interopDefaultLegacy(isBetween)
+var React__default = /*#__PURE__*/ _interopDefaultLegacy(React)
+var React__namespace = /*#__PURE__*/ _interopNamespace(React)
+var calendarize__default = /*#__PURE__*/ _interopDefaultLegacy(calendarize)
+var sortBy__default = /*#__PURE__*/ _interopDefaultLegacy(sortBy)
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -85,9 +118,9 @@ const defaultTheme = {
   },
 }
 
-const ThemeContext = createContext(defaultTheme)
+const ThemeContext = React.createContext(defaultTheme)
 const useTheme = () => {
-  const customTheme = useContext(ThemeContext)
+  const customTheme = React.useContext(ThemeContext)
   if (!customTheme) {
     return defaultTheme
   }
@@ -96,9 +129,9 @@ const useTheme = () => {
 
 const MIN_HEIGHT = 1200
 const HOUR_GUIDE_WIDTH = 50
-const OVERLAP_OFFSET = Platform.OS === 'web' ? 20 : 8
-const OVERLAP_PADDING = Platform.OS === 'web' ? 3 : 0
-const eventCellCss = StyleSheet.create({
+const OVERLAP_OFFSET = reactNative.Platform.OS === 'web' ? 20 : 8
+const OVERLAP_PADDING = reactNative.Platform.OS === 'web' ? 3 : 0
+const eventCellCss = reactNative.StyleSheet.create({
   style: {
     zIndex: 100,
     borderRadius: 3,
@@ -115,7 +148,7 @@ const eventCellCss = StyleSheet.create({
 /*
  * Utility-first CSS.
  */
-const u = StyleSheet.create({
+const u = reactNative.StyleSheet.create({
   /*
    * Flex
    */
@@ -250,7 +283,7 @@ const u = StyleSheet.create({
     position: 'absolute',
   },
   truncate:
-    Platform.OS === 'web'
+    reactNative.Platform.OS === 'web'
       ? {
           overflow: 'hidden',
           // textOverflow: 'ellipsis',
@@ -259,10 +292,10 @@ const u = StyleSheet.create({
       : {},
 })
 
-const typedMemo = React__default.memo
+const typedMemo = React__default['default'].memo
 const DAY_MINUTES = 1440
 function getDatesInMonth(date = new Date(), locale = 'en') {
-  const subject = dayjs(date)
+  const subject = dayjs__default['default'](date)
   const days = Array(subject.daysInMonth() - 1)
     .fill(0)
     .map((_, i) => {
@@ -271,7 +304,7 @@ function getDatesInMonth(date = new Date(), locale = 'en') {
   return days
 }
 function getDatesInWeek(date = new Date(), weekStartsOn = 0, locale = 'en') {
-  const subject = dayjs(date)
+  const subject = dayjs__default['default'](date)
   const subjectDOW = subject.day()
   const days = Array(7)
     .fill(0)
@@ -283,7 +316,7 @@ function getDatesInWeek(date = new Date(), weekStartsOn = 0, locale = 'en') {
   return days
 }
 function getDatesInNextThreeDays(date = new Date(), locale = 'en') {
-  const subject = dayjs(date).locale(locale)
+  const subject = dayjs__default['default'](date).locale(locale)
   const days = Array(3)
     .fill(0)
     .map((_, i) => {
@@ -292,7 +325,7 @@ function getDatesInNextThreeDays(date = new Date(), locale = 'en') {
   return days
 }
 function getDatesInNextOneDay(date = new Date(), locale = 'en') {
-  const subject = dayjs(date).locale(locale)
+  const subject = dayjs__default['default'](date).locale(locale)
   const days = Array(1)
     .fill(0)
     .map((_, i) => {
@@ -333,7 +366,7 @@ function generateHoursArray(minTimeMinutes, maxTimeMinutes, stepMinutes) {
   return res
 }
 function isToday(date) {
-  const today = dayjs()
+  const today = dayjs__default['default']()
   return today.isSame(date, 'day')
 }
 function normalize(val, minVal, maxVal, newMin, newMax) {
@@ -344,8 +377,8 @@ function getRelativeTopInDay(date, minTimeMinutes, maxTimeMinutes) {
   return res
 }
 function todayInMinutes() {
-  const today = dayjs()
-  return today.diff(dayjs().startOf('day'), 'minute')
+  const today = dayjs__default['default']()
+  return today.diff(dayjs__default['default']().startOf('day'), 'minute')
 }
 function modeToNum(mode, current) {
   if (mode === 'month') {
@@ -353,7 +386,7 @@ function modeToNum(mode, current) {
       throw new Error('You must specify current date if mode is month')
     }
     if (current instanceof Date) {
-      current = dayjs(current)
+      current = dayjs__default['default'](current)
     }
     return current.daysInMonth() - current.date() + 1
   }
@@ -370,32 +403,44 @@ function modeToNum(mode, current) {
   }
 }
 function formatStartEnd(start, end, format) {
-  return `${dayjs(start).format(format)} - ${dayjs(end).format(format)}`
+  return `${dayjs__default['default'](start).format(format)} - ${dayjs__default['default'](
+    end,
+  ).format(format)}`
 }
 function isAllDayEvent(start, end) {
-  const _start = dayjs(start)
-  const _end = dayjs(end)
+  const _start = dayjs__default['default'](start)
+  const _end = dayjs__default['default'](end)
   return _start.hour() === 0 && _start.minute() === 0 && _end.hour() === 0 && _end.minute() === 0
 }
 function getCountOfEventsAtEvent(event, eventList) {
   return eventList.filter(
     (e) =>
-      dayjs(event.start).isBetween(e.start, e.end, 'minute', '[)') ||
-      dayjs(e.start).isBetween(event.start, event.end, 'minute', '[)'),
+      dayjs__default['default'](event.start).isBetween(e.start, e.end, 'minute', '[)') ||
+      dayjs__default['default'](e.start).isBetween(event.start, event.end, 'minute', '[)'),
   ).length
 }
 function getOrderOfEvent(event, eventList) {
-  const events = eventList
+  const sortedByTime = sortBy__default['default'](eventList, ['start', (e) => -e.end])
+  const events = sortedByTime
     .filter(
       (e) =>
-        dayjs(event.start).isBetween(e.start, e.end, 'minute', '[)') ||
-        dayjs(e.start).isBetween(event.start, event.end, 'minute', '[)'),
+        dayjs__default['default'](event.start).isBetween(e.start, e.end, 'minute', '[)') ||
+        dayjs__default['default'](e.start).isBetween(event.start, event.end, 'minute', '[)'),
     )
     .sort((a, b) => {
-      if (dayjs(a.start).isSame(b.start)) {
-        return dayjs(a.start).diff(a.end) < dayjs(b.start).diff(b.end) ? -1 : 1
+      if (dayjs__default['default'](a.start).isSame(b.start)) {
+        return dayjs__default['default'](a.start).diff(a.end) <
+          dayjs__default['default'](b.start).diff(b.end)
+          ? -1
+          : 1
+      }
+      if (
+        dayjs__default['default'](a.start).isSame(b.end) ||
+        dayjs__default['default'](a.start).isBefore(b.end)
+      ) {
+        return dayjs__default['default'](a.start).isBefore(b.end) ? -1 : 1
       } else {
-        return dayjs(a.start).isBefore(b.start) ? -1 : 1
+        return dayjs__default['default'](a.start).isBefore(b.start) ? -1 : 1
       }
     })
   const index = events.indexOf(event)
@@ -421,7 +466,7 @@ function getDatesInNextCustomDays(
   weekEndsOn = 6,
   locale = 'en',
 ) {
-  const subject = dayjs(date)
+  const subject = dayjs__default['default'](date)
   const subjectDOW = subject.day()
   const days = Array(weekDaysCount(weekStartsOn, weekEndsOn))
     .fill(0)
@@ -460,8 +505,15 @@ function getEventSpanningInfo(event, date, dayOfTheWeek, calendarWidth, showAdja
   const dayWidth = calendarWidth / 7
   // adding + 1 because durations start at 0
   const eventDuration =
-    Math.floor(dayjs.duration(dayjs(event.end).diff(dayjs(event.start))).asDays()) + 1
-  const eventDaysLeft = Math.floor(dayjs.duration(dayjs(event.end).diff(date)).asDays()) + 1
+    Math.floor(
+      dayjs__default['default']
+        .duration(dayjs__default['default'](event.end).diff(dayjs__default['default'](event.start)))
+        .asDays(),
+    ) + 1
+  const eventDaysLeft =
+    Math.floor(
+      dayjs__default['default'].duration(dayjs__default['default'](event.end).diff(date)).asDays(),
+    ) + 1
   const weekDaysLeft = 7 - dayOfTheWeek
   const monthDaysLeft = date.endOf('month').date() - date.date()
   // console.log(dayOfTheWeek === 0 && !showAdjacentMonths && monthDaysLeft < 7)
@@ -491,7 +543,7 @@ function stringHasContent(string) {
   return !!string.length
 }
 function getWeeksWithAdjacentMonths(targetDate, weekStartsOn) {
-  let weeks = calendarize(targetDate.toDate(), weekStartsOn)
+  let weeks = calendarize__default['default'](targetDate.toDate(), weekStartsOn)
   const firstDayIndex = weeks[0].findIndex((d) => d === 1)
   const lastDay = targetDate.endOf('month').date()
   const lastDayIndex = weeks[weeks.length - 1].findIndex((d) => d === lastDay)
@@ -510,12 +562,12 @@ function getWeeksWithAdjacentMonths(targetDate, weekStartsOn) {
 }
 
 function useNow(enabled) {
-  const [now, setNow] = React__default.useState(dayjs())
-  React__default.useEffect(() => {
+  const [now, setNow] = React__default['default'].useState(dayjs__default['default']())
+  React__default['default'].useEffect(() => {
     if (!enabled) {
       return () => {}
     }
-    const pid = setInterval(() => setNow(dayjs()), 60 * 1000)
+    const pid = setInterval(() => setNow(dayjs__default['default']()), 60 * 1000)
     return () => clearInterval(pid)
   }, [enabled])
   return {
@@ -525,10 +577,10 @@ function useNow(enabled) {
 
 const SWIPE_THRESHOLD = 50
 function usePanResponder({ onSwipeHorizontal }) {
-  const [panHandled, setPanHandled] = React__default.useState(false)
-  const panResponder = React__default.useMemo(
+  const [panHandled, setPanHandled] = React__default['default'].useState(false)
+  const panResponder = React__default['default'].useMemo(
     () =>
-      PanResponder.create({
+      reactNative.PanResponder.create({
         // see https://stackoverflow.com/questions/47568850/touchableopacity-with-parent-panresponder
         onMoveShouldSetPanResponder: (_, { dx, dy }) => {
           return dx > 2 || dx < -2 || dy > 2 || dy < -2
@@ -563,19 +615,19 @@ function useCalendarTouchableOpacityProps({
   injectedStyles = [],
   onPressEvent,
 }) {
-  const getEventStyle = React__default.useMemo(
+  const getEventStyle = React__default['default'].useMemo(
     () => (typeof eventCellStyle === 'function' ? eventCellStyle : () => eventCellStyle),
     [eventCellStyle],
   )
-  const plainJsEvent = React__default.useMemo(
+  const plainJsEvent = React__default['default'].useMemo(
     () =>
       Object.assign(Object.assign({}, event), {
-        start: dayjs(event.start).toDate(),
-        end: dayjs(event.end).toDate(),
+        start: dayjs__default['default'](event.start).toDate(),
+        end: dayjs__default['default'](event.end).toDate(),
       }),
     [event],
   )
-  const _onPress = React__default.useCallback(() => {
+  const _onPress = React__default['default'].useCallback(() => {
     onPressEvent && onPressEvent(plainJsEvent)
   }, [onPressEvent, plainJsEvent])
   const touchableOpacityProps = {
@@ -598,28 +650,28 @@ function DefaultCalendarEventRenderer({
   const theme = useTheme()
   const eventTimeStyle = { fontSize: theme.typography.xs.fontSize, color: textColor }
   const eventTitleStyle = { fontSize: theme.typography.sm.fontSize, color: textColor }
-  return React.createElement(
-    TouchableOpacity,
+  return React__namespace.createElement(
+    reactNative.TouchableOpacity,
     Object.assign({}, touchableOpacityProps),
-    dayjs(event.end).diff(event.start, 'minute') < 32 && showTime
-      ? React.createElement(
-          Text,
+    dayjs__default['default'](event.end).diff(event.start, 'minute') < 32 && showTime
+      ? React__namespace.createElement(
+          reactNative.Text,
           { style: eventTitleStyle },
           event.title,
           ',',
-          React.createElement(
-            Text,
+          React__namespace.createElement(
+            reactNative.Text,
             { style: eventTimeStyle },
-            dayjs(event.start).format(ampm ? 'hh:mm a' : 'HH:mm'),
+            dayjs__default['default'](event.start).format(ampm ? 'hh:mm a' : 'HH:mm'),
           ),
         )
-      : React.createElement(
-          React.Fragment,
+      : React__namespace.createElement(
+          React__namespace.Fragment,
           null,
-          React.createElement(Text, { style: eventTitleStyle }, event.title),
+          React__namespace.createElement(reactNative.Text, { style: eventTitleStyle }, event.title),
           showTime &&
-            React.createElement(
-              Text,
+            React__namespace.createElement(
+              reactNative.Text,
               { style: eventTimeStyle },
               formatStartEnd(event.start, event.end, ampm ? 'h:mm a' : 'HH:mm'),
             ),
@@ -642,14 +694,20 @@ function _CalendarEvent({
   maxTimeMinutes = 1440,
 }) {
   const theme = useTheme()
-  const palettes = React.useMemo(
+  const palettes = React__namespace.useMemo(
     () => [theme.palette.primary, ...theme.eventCellOverlappings],
     [theme],
   )
   const getEventCellPositionStyle = (start, end) => {
     const relativeHeight =
-      100 * (1 / (maxTimeMinutes - minTimeMinutes)) * dayjs(end).diff(start, 'minute')
-    const relativeTop = getRelativeTopInDay(dayjs(start), minTimeMinutes, maxTimeMinutes)
+      100 *
+      (1 / (maxTimeMinutes - minTimeMinutes)) *
+      dayjs__default['default'](end).diff(start, 'minute')
+    const relativeTop = getRelativeTopInDay(
+      dayjs__default['default'](start),
+      minTimeMinutes,
+      maxTimeMinutes,
+    )
     return {
       height: `${relativeHeight}%`,
       top: `${relativeTop}%`,
@@ -667,14 +725,14 @@ function _CalendarEvent({
       u['mx-3'],
     ],
   })
-  const textColor = React.useMemo(() => {
+  const textColor = React__namespace.useMemo(() => {
     const fgColors = palettes.map((p) => p.contrastText)
     return fgColors[eventCount % fgColors.length] || fgColors[0]
   }, [eventCount, palettes])
   if (renderEvent) {
     return renderEvent(event, touchableOpacityProps)
   }
-  return React.createElement(DefaultCalendarEventRenderer, {
+  return React__namespace.createElement(DefaultCalendarEventRenderer, {
     event: event,
     showTime: showTime,
     ampm: ampm,
@@ -686,16 +744,16 @@ const CalendarEvent = typedMemo(_CalendarEvent)
 
 const HourGuideCell = ({ cellHeight, onPress, date, hour, index, calendarCellStyle }) => {
   const theme = useTheme()
-  const getCalendarCellStyle = React.useMemo(
+  const getCalendarCellStyle = React__namespace.useMemo(
     () => (typeof calendarCellStyle === 'function' ? calendarCellStyle : () => calendarCellStyle),
     [calendarCellStyle],
   )
   const numberHour = hour.split(':')[0]
   const numberMinute = hour.split(':')[1]
-  return React.createElement(
-    TouchableWithoutFeedback,
+  return React__namespace.createElement(
+    reactNative.TouchableWithoutFeedback,
     { onPress: () => onPress(date.hour(Number(numberHour)).minute(Number(numberMinute))) },
-    React.createElement(View, {
+    React__namespace.createElement(reactNative.View, {
       style: [
         u['border-l'],
         u['border-b'],
@@ -709,23 +767,23 @@ const HourGuideCell = ({ cellHeight, onPress, date, hour, index, calendarCellSty
 
 const _HourGuideColumn = ({ cellHeight, hour, hourStyle = {} }) => {
   const theme = useTheme()
-  const textStyle = React.useMemo(
+  const textStyle = React__namespace.useMemo(
     () => ({ color: theme.palette.gray[500], fontSize: theme.typography.xs.fontSize }),
     [theme],
   )
-  return React.createElement(
-    View,
+  return React__namespace.createElement(
+    reactNative.View,
     { style: { height: cellHeight } },
-    React.createElement(
-      Text,
+    React__namespace.createElement(
+      reactNative.Text,
       { style: [objHasContent(hourStyle) ? hourStyle : textStyle, u['text-center']] },
       hour,
     ),
   )
 }
-const HourGuideColumn = React.memo(_HourGuideColumn, () => true)
+const HourGuideColumn = React__namespace.memo(_HourGuideColumn, () => true)
 
-const styles = StyleSheet.create({
+const styles = reactNative.StyleSheet.create({
   nowIndicator: {
     position: 'absolute',
     zIndex: 10000,
@@ -757,10 +815,10 @@ function _CalendarBody({
   maxTimeMinutes = 1440,
   stepMinutes = 60,
 }) {
-  const scrollView = React.useRef(null)
+  const scrollView = React__namespace.useRef(null)
   const { now } = useNow(!hideNowIndicator)
-  React.useEffect(() => {
-    if (scrollView.current && scrollOffsetMinutes && Platform.OS !== 'ios') {
+  React__namespace.useEffect(() => {
+    if (scrollView.current && scrollOffsetMinutes && reactNative.Platform.OS !== 'ios') {
       // We add delay here to work correct on React Native
       // see: https://stackoverflow.com/questions/33208477/react-native-android-scrollview-scrollto-not-working
       setTimeout(
@@ -772,21 +830,21 @@ function _CalendarBody({
             })
           }
         },
-        Platform.OS === 'web' ? 0 : 10,
+        reactNative.Platform.OS === 'web' ? 0 : 10,
       )
     }
   }, [scrollView, scrollOffsetMinutes, cellHeight, stepMinutes])
   const panResponder = usePanResponder({
     onSwipeHorizontal,
   })
-  const _onPressCell = React.useCallback(
+  const _onPressCell = React__namespace.useCallback(
     (date) => {
       onPressCell && onPressCell(date.toDate())
     },
     [onPressCell],
   )
   const _renderMappedEvent = (event) =>
-    React.createElement(CalendarEvent, {
+    React__namespace.createElement(CalendarEvent, {
       key: `${event.start}${event.title}${event.end}`,
       event: event,
       onPressEvent: onPressEvent,
@@ -802,14 +860,18 @@ function _CalendarBody({
     })
   const theme = useTheme()
   const hours = generateHoursArray(minTimeMinutes, maxTimeMinutes, stepMinutes)
-  return React.createElement(
-    React.Fragment,
+  return React__namespace.createElement(
+    React__namespace.Fragment,
     null,
     headerComponent != null
-      ? React.createElement(View, { style: headerComponentStyle }, headerComponent)
+      ? React__namespace.createElement(
+          reactNative.View,
+          { style: headerComponentStyle },
+          headerComponent,
+        )
       : null,
-    React.createElement(
-      ScrollView,
+    React__namespace.createElement(
+      reactNative.ScrollView,
       Object.assign(
         {
           style: [
@@ -821,24 +883,25 @@ function _CalendarBody({
           ref: scrollView,
           scrollEventThrottle: 32,
         },
-        Platform.OS !== 'web' ? panResponder.panHandlers : {},
+        reactNative.Platform.OS !== 'web' ? panResponder.panHandlers : {},
         {
           showsVerticalScrollIndicator: false,
           nestedScrollEnabled: true,
-          contentOffset: Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 },
+          contentOffset:
+            reactNative.Platform.OS === 'ios' ? { x: 0, y: scrollOffsetMinutes } : { x: 0, y: 0 },
         },
       ),
-      React.createElement(
-        View,
+      React__namespace.createElement(
+        reactNative.View,
         Object.assign(
           { style: [u['flex-1'], theme.isRTL ? u['flex-row-reverse'] : u['flex-row']] },
-          Platform.OS === 'web' ? panResponder.panHandlers : {},
+          reactNative.Platform.OS === 'web' ? panResponder.panHandlers : {},
         ),
-        React.createElement(
-          View,
+        React__namespace.createElement(
+          reactNative.View,
           { style: [u['z-20'], u['w-50']] },
           hours.map((hour, index) =>
-            React.createElement(HourGuideColumn, {
+            React__namespace.createElement(HourGuideColumn, {
               key: index + '',
               cellHeight: cellHeight,
               hour: ampm ? hour.hour12Label : hour.hour24Label,
@@ -848,11 +911,11 @@ function _CalendarBody({
           ),
         ),
         dateRange.map((date) =>
-          React.createElement(
-            View,
+          React__namespace.createElement(
+            reactNative.View,
             { style: [u['flex-1'], u['overflow-hidden']], key: date.toString() },
             hours.map((hour, index) =>
-              React.createElement(HourGuideCell, {
+              React__namespace.createElement(HourGuideCell, {
                 key: index + '',
                 cellHeight: cellHeight,
                 date: date,
@@ -864,35 +927,47 @@ function _CalendarBody({
             ),
             events
               .filter(({ start }) =>
-                dayjs(start).isBetween(date.startOf('day'), date.endOf('day'), null, '[)'),
+                dayjs__default['default'](start).isBetween(
+                  date.startOf('day'),
+                  date.endOf('day'),
+                  null,
+                  '[)',
+                ),
               )
               .map(_renderMappedEvent),
             events
               .filter(
                 ({ start, end }) =>
-                  dayjs(start).isBefore(date.startOf('day')) &&
-                  dayjs(end).isBetween(date.startOf('day'), date.endOf('day'), null, '[)'),
-              )
-              .map((event) =>
-                Object.assign(Object.assign({}, event), { start: dayjs(event.end).startOf('day') }),
-              )
-              .map(_renderMappedEvent),
-            events
-              .filter(
-                ({ start, end }) =>
-                  dayjs(start).isBefore(date.startOf('day')) &&
-                  dayjs(end).isAfter(date.endOf('day')),
+                  dayjs__default['default'](start).isBefore(date.startOf('day')) &&
+                  dayjs__default['default'](end).isBetween(
+                    date.startOf('day'),
+                    date.endOf('day'),
+                    null,
+                    '[)',
+                  ),
               )
               .map((event) =>
                 Object.assign(Object.assign({}, event), {
-                  start: dayjs(event.end).startOf('day'),
-                  end: dayjs(event.end).endOf('day'),
+                  start: dayjs__default['default'](event.end).startOf('day'),
+                }),
+              )
+              .map(_renderMappedEvent),
+            events
+              .filter(
+                ({ start, end }) =>
+                  dayjs__default['default'](start).isBefore(date.startOf('day')) &&
+                  dayjs__default['default'](end).isAfter(date.endOf('day')),
+              )
+              .map((event) =>
+                Object.assign(Object.assign({}, event), {
+                  start: dayjs__default['default'](event.end).startOf('day'),
+                  end: dayjs__default['default'](event.end).endOf('day'),
                 }),
               )
               .map(_renderMappedEvent),
             isToday(date) &&
               !hideNowIndicator &&
-              React.createElement(View, {
+              React__namespace.createElement(reactNative.View, {
                 style: [
                   styles.nowIndicator,
                   { backgroundColor: theme.palette.nowIndicator },
@@ -920,10 +995,11 @@ function _CalendarEventForMonthView({
   showAdjacentMonths,
 }) {
   const theme = useTheme()
-  const { eventWidth, isMultipleDays, isMultipleDaysStart, eventWeekDuration } = React.useMemo(
-    () => getEventSpanningInfo(event, date, dayOfTheWeek, calendarWidth, showAdjacentMonths),
-    [date, dayOfTheWeek, event, calendarWidth, showAdjacentMonths],
-  )
+  const { eventWidth, isMultipleDays, isMultipleDaysStart, eventWeekDuration } =
+    React__namespace.useMemo(
+      () => getEventSpanningInfo(event, date, dayOfTheWeek, calendarWidth, showAdjacentMonths),
+      [date, dayOfTheWeek, event, calendarWidth, showAdjacentMonths],
+    )
   const touchableOpacityProps = useCalendarTouchableOpacityProps({
     event,
     eventCellStyle,
@@ -941,8 +1017,8 @@ function _CalendarEventForMonthView({
       u['mt-2'],
     ],
   })
-  return React.createElement(
-    TouchableOpacity,
+  return React__namespace.createElement(
+    reactNative.TouchableOpacity,
     {
       style: { minHeight: eventMinHeightForMonthView },
       onPress: () =>
@@ -951,11 +1027,11 @@ function _CalendarEventForMonthView({
     (!isMultipleDays && date.isSame(event.start, 'day')) || (isMultipleDays && isMultipleDaysStart)
       ? renderEvent
         ? renderEvent(event, touchableOpacityProps)
-        : React.createElement(
-            View,
+        : React__namespace.createElement(
+            reactNative.View,
             Object.assign({}, touchableOpacityProps),
-            React.createElement(
-              Text,
+            React__namespace.createElement(
+              reactNative.Text,
               {
                 style: [
                   { color: theme.palette.primary.contrastText },
@@ -995,49 +1071,67 @@ function _CalendarBodyForMonthView({
   sortedMonthView,
 }) {
   const { now } = useNow(!hideNowIndicator)
-  const [calendarWidth, setCalendarWidth] = React.useState(0)
+  const [calendarWidth, setCalendarWidth] = React__namespace.useState(0)
   const panResponder = usePanResponder({
     onSwipeHorizontal,
   })
   const weeks = showAdjacentMonths
     ? getWeeksWithAdjacentMonths(targetDate, weekStartsOn)
-    : calendarize(targetDate.toDate(), weekStartsOn)
+    : calendarize__default['default'](targetDate.toDate(), weekStartsOn)
   const minCellHeight = containerHeight / 5 - 30
   const theme = useTheme()
-  const getCalendarCellStyle = React.useMemo(
+  const getCalendarCellStyle = React__namespace.useMemo(
     () => (typeof calendarCellStyle === 'function' ? calendarCellStyle : () => calendarCellStyle),
     [calendarCellStyle],
   )
-  const getCalendarCellTextStyle = React.useMemo(
+  const getCalendarCellTextStyle = React__namespace.useMemo(
     () =>
       typeof calendarCellTextStyle === 'function'
         ? calendarCellTextStyle
         : () => calendarCellTextStyle,
     [calendarCellTextStyle],
   )
-  const sortedEvents = React.useCallback(
+  const sortedEvents = React__namespace.useCallback(
     (day) => {
       return sortedMonthView
         ? events
             .filter(({ start, end }) =>
-              day.isBetween(dayjs(start).startOf('day'), dayjs(end).endOf('day'), null, '[)'),
+              day.isBetween(
+                dayjs__default['default'](start).startOf('day'),
+                dayjs__default['default'](end).endOf('day'),
+                null,
+                '[)',
+              ),
             )
             .sort((a, b) => {
-              if (dayjs(a.start).isSame(b.start, 'day')) {
-                const aDuration = dayjs.duration(dayjs(a.end).diff(dayjs(a.start))).days()
-                const bDuration = dayjs.duration(dayjs(b.end).diff(dayjs(b.start))).days()
+              if (dayjs__default['default'](a.start).isSame(b.start, 'day')) {
+                const aDuration = dayjs__default['default']
+                  .duration(
+                    dayjs__default['default'](a.end).diff(dayjs__default['default'](a.start)),
+                  )
+                  .days()
+                const bDuration = dayjs__default['default']
+                  .duration(
+                    dayjs__default['default'](b.end).diff(dayjs__default['default'](b.start)),
+                  )
+                  .days()
                 return bDuration - aDuration
               }
               return a.start.getTime() - b.start.getTime()
             })
         : events.filter(({ start, end }) =>
-            day.isBetween(dayjs(start).startOf('day'), dayjs(end).endOf('day'), null, '[)'),
+            day.isBetween(
+              dayjs__default['default'](start).startOf('day'),
+              dayjs__default['default'](end).endOf('day'),
+              null,
+              '[)',
+            ),
           )
     },
     [events, sortedMonthView],
   )
-  return React.createElement(
-    View,
+  return React__namespace.createElement(
+    reactNative.View,
     Object.assign(
       {
         style: [
@@ -1058,14 +1152,14 @@ function _CalendarBodyForMonthView({
       panResponder.panHandlers,
     ),
     weeks.map((week, i) =>
-      React.createElement(
-        View,
+      React__namespace.createElement(
+        reactNative.View,
         {
           key: i,
           style: [
             u['flex-1'],
             theme.isRTL ? u['flex-row-reverse'] : u['flex-row'],
-            Platform.OS === 'android' && style,
+            reactNative.Platform.OS === 'android' && style,
             {
               minHeight: minCellHeight,
             },
@@ -1074,8 +1168,8 @@ function _CalendarBodyForMonthView({
         week
           .map((d) => (showAdjacentMonths ? targetDate.date(d) : d > 0 ? targetDate.date(d) : null))
           .map((date, ii) =>
-            React.createElement(
-              TouchableOpacity,
+            React__namespace.createElement(
+              reactNative.TouchableOpacity,
               {
                 onPress: () => date && onPressCell && onPressCell(date.toDate()),
                 style: [
@@ -1099,8 +1193,8 @@ function _CalendarBodyForMonthView({
                 ],
                 key: ii,
               },
-              React.createElement(
-                TouchableOpacity,
+              React__namespace.createElement(
+                reactNative.TouchableOpacity,
                 {
                   onPress: () =>
                     date &&
@@ -1108,8 +1202,8 @@ function _CalendarBodyForMonthView({
                       ? onPressDateHeader(date.toDate())
                       : onPressCell && onPressCell(date.toDate())),
                 },
-                React.createElement(
-                  Text,
+                React__namespace.createElement(
+                  reactNative.Text,
                   {
                     style: [
                       { textAlign: 'center' },
@@ -1144,8 +1238,8 @@ function _CalendarBodyForMonthView({
                     index > maxVisibleEventCount
                       ? null
                       : index === maxVisibleEventCount
-                      ? React.createElement(
-                          Text,
+                      ? React__namespace.createElement(
+                          reactNative.Text,
                           {
                             key: index,
                             style: [
@@ -1158,7 +1252,7 @@ function _CalendarBodyForMonthView({
                             `${events.length - maxVisibleEventCount}`,
                           ),
                         )
-                      : React.createElement(CalendarEventForMonthView, {
+                      : React__namespace.createElement(CalendarEventForMonthView, {
                           key: index,
                           event: event,
                           eventCellStyle: eventCellStyle,
@@ -1197,13 +1291,13 @@ function _CalendarHeader({
   showAllDayEventCell = true,
   hideHours = false,
 }) {
-  const _onPressHeader = React.useCallback(
+  const _onPressHeader = React__namespace.useCallback(
     (date) => {
       onPressDateHeader && onPressDateHeader(date)
     },
     [onPressDateHeader],
   )
-  const _onPressEvent = React.useCallback(
+  const _onPressEvent = React__namespace.useCallback(
     (event) => {
       onPressEvent && onPressEvent(event)
     },
@@ -1212,8 +1306,8 @@ function _CalendarHeader({
   const theme = useTheme()
   const borderColor = { borderColor: theme.palette.gray['200'] }
   const primaryBg = { backgroundColor: theme.palette.primary.main }
-  return React.createElement(
-    View,
+  return React__namespace.createElement(
+    reactNative.View,
     {
       style: [
         showAllDayEventCell ? u['border-b-2'] : {},
@@ -1222,27 +1316,30 @@ function _CalendarHeader({
         style,
       ],
     },
-    !hideHours && React.createElement(View, { style: [u['z-10'], u['w-50'], borderColor] }),
+    !hideHours &&
+      React__namespace.createElement(reactNative.View, {
+        style: [u['z-10'], u['w-50'], borderColor],
+      }),
     dateRange.map((date) => {
       const shouldHighlight = activeDate ? date.isSame(activeDate, 'date') : isToday(date)
-      return React.createElement(
-        TouchableOpacity,
+      return React__namespace.createElement(
+        reactNative.TouchableOpacity,
         {
           style: [u['flex-1'], u['pt-2']],
           onPress: () => _onPressHeader(date.toDate()),
           disabled: onPressDateHeader === undefined,
           key: date.toString(),
         },
-        React.createElement(
-          View,
+        React__namespace.createElement(
+          reactNative.View,
           {
             style: [
               { height: cellHeight },
               objHasContent(headerContentStyle) ? headerContentStyle : u['justify-between'],
             ],
           },
-          React.createElement(
-            Text,
+          React__namespace.createElement(
+            reactNative.Text,
             {
               style: [
                 theme.typography.xs,
@@ -1258,8 +1355,8 @@ function _CalendarHeader({
             },
             date.format('ddd'),
           ),
-          React.createElement(
-            View,
+          React__namespace.createElement(
+            reactNative.View,
             {
               style: objHasContent(dayHeaderStyle)
                 ? dayHeaderStyle
@@ -1277,8 +1374,8 @@ function _CalendarHeader({
                   ]
                 : [u['mb-6']],
             },
-            React.createElement(
-              Text,
+            React__namespace.createElement(
+              reactNative.Text,
               {
                 style: [
                   {
@@ -1290,7 +1387,7 @@ function _CalendarHeader({
                   },
                   theme.typography.xl,
                   u['text-center'],
-                  Platform.OS === 'web' &&
+                  reactNative.Platform.OS === 'web' &&
                     shouldHighlight &&
                     !stringHasContent(dayHeaderHighlightColor) &&
                     u['mt-6'],
@@ -1301,8 +1398,8 @@ function _CalendarHeader({
           ),
         ),
         showAllDayEventCell
-          ? React.createElement(
-              View,
+          ? React__namespace.createElement(
+              reactNative.View,
               {
                 style: [
                   u['border-l'],
@@ -1311,18 +1408,20 @@ function _CalendarHeader({
                 ],
               },
               allDayEvents.map((event, index) => {
-                if (!dayjs(date).isBetween(event.start, event.end, 'day', '[]')) {
+                if (
+                  !dayjs__default['default'](date).isBetween(event.start, event.end, 'day', '[]')
+                ) {
                   return null
                 }
-                return React.createElement(
-                  TouchableOpacity,
+                return React__namespace.createElement(
+                  reactNative.TouchableOpacity,
                   {
                     style: [eventCellCss.style, primaryBg, u['mt-2']],
                     key: index,
                     onPress: () => _onPressEvent(event),
                   },
-                  React.createElement(
-                    Text,
+                  React__namespace.createElement(
+                    reactNative.Text,
                     {
                       style: {
                         fontSize: theme.typography.sm.fontSize,
@@ -1343,10 +1442,10 @@ const CalendarHeader = typedMemo(_CalendarHeader)
 
 function _CalendarHeaderForMonthView({ locale, weekStartsOn, style }) {
   const dates = getDatesInWeek(new Date(), weekStartsOn, locale)
-  const todayWeekNum = dayjs().day()
+  const todayWeekNum = dayjs__default['default']().day()
   const theme = useTheme()
-  return React.createElement(
-    View,
+  return React__namespace.createElement(
+    reactNative.View,
     {
       style: [
         u['border-b'],
@@ -1356,14 +1455,14 @@ function _CalendarHeaderForMonthView({ locale, weekStartsOn, style }) {
       ],
     },
     dates.map((date) =>
-      React.createElement(
-        View,
+      React__namespace.createElement(
+        reactNative.View,
         { style: { flex: 1, paddingTop: 2 }, key: date.toISOString() },
-        React.createElement(
-          View,
+        React__namespace.createElement(
+          reactNative.View,
           { style: { height: 30 } },
-          React.createElement(
-            Text,
+          React__namespace.createElement(
+            reactNative.Text,
             {
               style: [
                 u['text-center'],
@@ -1426,21 +1525,23 @@ function _CalendarContainer({
   maxTimeMinutes = 1440,
   stepMinutes = 60,
 }) {
-  const [targetDate, setTargetDate] = React__default.useState(dayjs(date))
-  React__default.useEffect(() => {
+  const [targetDate, setTargetDate] = React__default['default'].useState(
+    dayjs__default['default'](date),
+  )
+  React__default['default'].useEffect(() => {
     if (date) {
-      setTargetDate(dayjs(date))
+      setTargetDate(dayjs__default['default'](date))
     }
   }, [date])
-  const allDayEvents = React__default.useMemo(
+  const allDayEvents = React__default['default'].useMemo(
     () => events.filter((event) => isAllDayEvent(event.start, event.end)),
     [events],
   )
-  const daytimeEvents = React__default.useMemo(
+  const daytimeEvents = React__default['default'].useMemo(
     () => events.filter((event) => !isAllDayEvent(event.start, event.end)),
     [events],
   )
-  const dateRange = React__default.useMemo(() => {
+  const dateRange = React__default['default'].useMemo(() => {
     switch (mode) {
       case 'month':
         return getDatesInMonth(targetDate, locale)
@@ -1458,12 +1559,12 @@ function _CalendarContainer({
         )
     }
   }, [mode, targetDate, locale, weekEndsOn, weekStartsOn])
-  React__default.useEffect(() => {
+  React__default['default'].useEffect(() => {
     if (onChangeDate) {
       onChangeDate([dateRange[0].toDate(), dateRange.slice(-1)[0].toDate()])
     }
   }, [dateRange, onChangeDate])
-  const cellHeight = React__default.useMemo(
+  const cellHeight = React__default['default'].useMemo(
     () =>
       hourRowHeight ||
       Math.max(height - stepMinutes / 2, MIN_HEIGHT) /
@@ -1471,7 +1572,7 @@ function _CalendarContainer({
     [height, hourRowHeight, minTimeMinutes, maxTimeMinutes, stepMinutes],
   )
   const theme = useTheme()
-  const getDateRange = React__default.useCallback(
+  const getDateRange = React__default['default'].useCallback(
     (date) => {
       switch (mode) {
         case 'month':
@@ -1492,7 +1593,7 @@ function _CalendarContainer({
     },
     [mode, locale, weekEndsOn, weekStartsOn],
   )
-  const onSwipeHorizontal = React__default.useCallback(
+  const onSwipeHorizontal = React__default['default'].useCallback(
     (direction) => {
       if (!swipeEnabled) {
         return
@@ -1532,11 +1633,14 @@ function _CalendarContainer({
       weekDayHeaderHighlightColor: weekDayHeaderHighlightColor,
       showAllDayEventCell: showAllDayEventCell,
     }
-    return React__default.createElement(
-      React__default.Fragment,
+    return React__default['default'].createElement(
+      React__default['default'].Fragment,
       null,
-      React__default.createElement(HeaderComponentForMonthView, Object.assign({}, headerProps)),
-      React__default.createElement(
+      React__default['default'].createElement(
+        HeaderComponentForMonthView,
+        Object.assign({}, headerProps),
+      ),
+      React__default['default'].createElement(
         CalendarBodyForMonthView,
         Object.assign(
           { showAdjacentMonths: false, moreLabel: '', sortedMonthView: false },
@@ -1573,11 +1677,11 @@ function _CalendarContainer({
     weekDayHeaderHighlightColor: weekDayHeaderHighlightColor,
     showAllDayEventCell: showAllDayEventCell,
   })
-  return React__default.createElement(
-    React__default.Fragment,
+  return React__default['default'].createElement(
+    React__default['default'].Fragment,
     null,
-    React__default.createElement(HeaderComponent, Object.assign({}, headerProps)),
-    React__default.createElement(
+    React__default['default'].createElement(HeaderComponent, Object.assign({}, headerProps)),
+    React__default['default'].createElement(
       CalendarBody,
       Object.assign({}, commonProps, {
         style: bodyContainerStyle,
@@ -1606,65 +1710,63 @@ function _CalendarContainer({
 }
 const CalendarContainer = typedMemo(_CalendarContainer)
 
-dayjs.extend(isBetween)
+dayjs__default['default'].extend(isBetween__default['default'])
 function _Calendar(_a) {
   //const _theme = merge(defaultTheme, theme, { isRTL }) as ThemeInterface
   var props = __rest(_a, ['theme', 'isRTL'])
-  return React__default.createElement(
+  return React__default['default'].createElement(
     ThemeContext.Provider,
     { value: defaultTheme },
-    React__default.createElement(CalendarContainer, Object.assign({}, props)),
+    React__default['default'].createElement(CalendarContainer, Object.assign({}, props)),
   )
 }
 const Calendar = typedMemo(_Calendar)
 
-dayjs.extend(duration)
-dayjs.extend(isBetween)
+dayjs__default['default'].extend(duration__default['default'])
+dayjs__default['default'].extend(isBetween__default['default'])
 
-export {
-  Calendar,
-  CalendarBody,
-  CalendarBodyForMonthView,
-  CalendarEvent,
-  CalendarEventForMonthView,
-  CalendarHeader,
-  CalendarHeaderForMonthView,
-  DAY_MINUTES,
-  DefaultCalendarEventRenderer,
-  HOUR_GUIDE_WIDTH,
-  MIN_HEIGHT,
-  OVERLAP_OFFSET,
-  OVERLAP_PADDING,
-  ThemeContext,
-  Calendar as default,
-  defaultTheme,
-  eventCellCss,
-  formatStartEnd,
-  generateHoursArray,
-  getCountOfEventsAtEvent,
-  getDatesInMonth,
-  getDatesInNextCustomDays,
-  getDatesInNextOneDay,
-  getDatesInNextThreeDays,
-  getDatesInWeek,
-  getEventSpanningInfo,
-  getOrderOfEvent,
-  getRelativeTopInDay,
-  getStyleForOverlappingEvent,
-  getTimeContext,
-  getWeeksWithAdjacentMonths,
-  hours,
-  isAllDayEvent,
-  isToday,
-  modeToNum,
-  normalize,
-  objHasContent,
-  padZeros,
-  parseStartEndHour,
-  stringHasContent,
-  todayInMinutes,
-  typedMemo,
-  u,
-  useTheme,
-}
-//# sourceMappingURL=index.es.js.map
+exports.Calendar = Calendar
+exports.CalendarBody = CalendarBody
+exports.CalendarBodyForMonthView = CalendarBodyForMonthView
+exports.CalendarEvent = CalendarEvent
+exports.CalendarEventForMonthView = CalendarEventForMonthView
+exports.CalendarHeader = CalendarHeader
+exports.CalendarHeaderForMonthView = CalendarHeaderForMonthView
+exports.DAY_MINUTES = DAY_MINUTES
+exports.DefaultCalendarEventRenderer = DefaultCalendarEventRenderer
+exports.HOUR_GUIDE_WIDTH = HOUR_GUIDE_WIDTH
+exports.MIN_HEIGHT = MIN_HEIGHT
+exports.OVERLAP_OFFSET = OVERLAP_OFFSET
+exports.OVERLAP_PADDING = OVERLAP_PADDING
+exports.ThemeContext = ThemeContext
+exports['default'] = Calendar
+exports.defaultTheme = defaultTheme
+exports.eventCellCss = eventCellCss
+exports.formatStartEnd = formatStartEnd
+exports.generateHoursArray = generateHoursArray
+exports.getCountOfEventsAtEvent = getCountOfEventsAtEvent
+exports.getDatesInMonth = getDatesInMonth
+exports.getDatesInNextCustomDays = getDatesInNextCustomDays
+exports.getDatesInNextOneDay = getDatesInNextOneDay
+exports.getDatesInNextThreeDays = getDatesInNextThreeDays
+exports.getDatesInWeek = getDatesInWeek
+exports.getEventSpanningInfo = getEventSpanningInfo
+exports.getOrderOfEvent = getOrderOfEvent
+exports.getRelativeTopInDay = getRelativeTopInDay
+exports.getStyleForOverlappingEvent = getStyleForOverlappingEvent
+exports.getTimeContext = getTimeContext
+exports.getWeeksWithAdjacentMonths = getWeeksWithAdjacentMonths
+exports.hours = hours
+exports.isAllDayEvent = isAllDayEvent
+exports.isToday = isToday
+exports.modeToNum = modeToNum
+exports.normalize = normalize
+exports.objHasContent = objHasContent
+exports.padZeros = padZeros
+exports.parseStartEndHour = parseStartEndHour
+exports.stringHasContent = stringHasContent
+exports.todayInMinutes = todayInMinutes
+exports.typedMemo = typedMemo
+exports.u = u
+exports.useTheme = useTheme
+//# sourceMappingURL=index.js.map

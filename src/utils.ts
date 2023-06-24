@@ -1,5 +1,6 @@
 import calendarize, { Week } from 'calendarize'
 import dayjs from 'dayjs'
+import sortBy from 'lodash/sortBy'
 import React from 'react'
 import { TextStyle, ViewStyle } from 'react-native'
 
@@ -179,7 +180,9 @@ export function getCountOfEventsAtEvent(
 }
 
 export function getOrderOfEvent(event: ICalendarEventBase, eventList: ICalendarEventBase[]) {
-  const events = eventList
+  const sortedByTime = sortBy(eventList, ['start', (e) => -e.end])
+
+  const events = sortedByTime
     .filter(
       (e) =>
         dayjs(event.start).isBetween(e.start, e.end, 'minute', '[)') ||
@@ -188,6 +191,9 @@ export function getOrderOfEvent(event: ICalendarEventBase, eventList: ICalendarE
     .sort((a, b) => {
       if (dayjs(a.start).isSame(b.start)) {
         return dayjs(a.start).diff(a.end) < dayjs(b.start).diff(b.end) ? -1 : 1
+      }
+      if (dayjs(a.start).isSame(b.end) || dayjs(a.start).isBefore(b.end)) {
+        return dayjs(a.start).isBefore(b.end) ? -1 : 1
       } else {
         return dayjs(a.start).isBefore(b.start) ? -1 : 1
       }

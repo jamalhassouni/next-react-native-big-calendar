@@ -7,6 +7,7 @@ var duration = require('dayjs/plugin/duration')
 var isBetween = require('dayjs/plugin/isBetween')
 var React = require('react')
 var calendarize = require('calendarize')
+var sortBy = require('lodash/sortBy')
 var reactNative = require('react-native')
 
 function _interopDefaultLegacy(e) {
@@ -45,6 +46,7 @@ var isBetween__default = /*#__PURE__*/ _interopDefaultLegacy(isBetween)
 var React__default = /*#__PURE__*/ _interopDefaultLegacy(React)
 var React__namespace = /*#__PURE__*/ _interopNamespace(React)
 var calendarize__default = /*#__PURE__*/ _interopDefaultLegacy(calendarize)
+var sortBy__default = /*#__PURE__*/ _interopDefaultLegacy(sortBy)
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -418,7 +420,8 @@ function getCountOfEventsAtEvent(event, eventList) {
   ).length
 }
 function getOrderOfEvent(event, eventList) {
-  const events = eventList
+  const sortedByTime = sortBy__default['default'](eventList, ['start', (e) => -e.end])
+  const events = sortedByTime
     .filter(
       (e) =>
         dayjs__default['default'](event.start).isBetween(e.start, e.end, 'minute', '[)') ||
@@ -430,6 +433,12 @@ function getOrderOfEvent(event, eventList) {
           dayjs__default['default'](b.start).diff(b.end)
           ? -1
           : 1
+      }
+      if (
+        dayjs__default['default'](a.start).isSame(b.end) ||
+        dayjs__default['default'](a.start).isBefore(b.end)
+      ) {
+        return dayjs__default['default'](a.start).isBefore(b.end) ? -1 : 1
       } else {
         return dayjs__default['default'](a.start).isBefore(b.start) ? -1 : 1
       }

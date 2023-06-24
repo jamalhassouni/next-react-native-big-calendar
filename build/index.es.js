@@ -2,6 +2,7 @@ import calendarize from 'calendarize'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import isBetween from 'dayjs/plugin/isBetween'
+import sortBy from 'lodash/sortBy'
 import * as React from 'react'
 import React__default, { createContext, useContext } from 'react'
 import {
@@ -385,7 +386,8 @@ function getCountOfEventsAtEvent(event, eventList) {
   ).length
 }
 function getOrderOfEvent(event, eventList) {
-  const events = eventList
+  const sortedByTime = sortBy(eventList, ['start', (e) => -e.end])
+  const events = sortedByTime
     .filter(
       (e) =>
         dayjs(event.start).isBetween(e.start, e.end, 'minute', '[)') ||
@@ -394,6 +396,9 @@ function getOrderOfEvent(event, eventList) {
     .sort((a, b) => {
       if (dayjs(a.start).isSame(b.start)) {
         return dayjs(a.start).diff(a.end) < dayjs(b.start).diff(b.end) ? -1 : 1
+      }
+      if (dayjs(a.start).isSame(b.end) || dayjs(a.start).isBefore(b.end)) {
+        return dayjs(a.start).isBefore(b.end) ? -1 : 1
       } else {
         return dayjs(a.start).isBefore(b.start) ? -1 : 1
       }

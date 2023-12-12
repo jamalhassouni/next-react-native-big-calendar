@@ -9,7 +9,6 @@
   "author": "gosho-kazuya <ketsume0211@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepare": "simple-git-hooks || true",
     "storybook": "start-storybook -p 7007",
     "build-storybook": "build-storybook -o .storybook-build",
     "sync-rndemo": "yarn build && cp -r build rndemo",
@@ -76,9 +75,6 @@
     "tslib": "^2.4.1",
     "typescript": "^4.8.4",
     "webpack-merge": "^5.8.0"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
